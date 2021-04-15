@@ -1,20 +1,30 @@
-import { ITask } from "./task.types"
+import { ValidationError } from "sequelize"
+import { DBValidateError, ITask } from "./task.types"
 import Task from "./tasks.model"
 
 export const GetAllTasks = async () => {
     return Task.findAll()
 }
 
-export const CreateNewTask = async (newTask: ITask) => {
-    let result
+// Указываем, что асинхронная функция возвращает кортеж, который оформлен стандартным способом
+// для NodeJS. Первый параметр ошибка, а второй если ошибки нет - сами данные.
+export const CreateNewTask = async (newTask: ITask): Promise<[DBValidateError | null, Task | null]> => {
     try {
-        result = await Task.create(newTask)
+        return [null, await Task.create(newTask)]
     } catch (error) {
         console.error(error);
-        result = {
-            message: 'Dublicate entity',
-            statusCode: 409
+        // Проверяем, является ли ошибка валидационной ошибкой sequelize
+        if (error instanceof ValidationError) {
+            return [{
+                message: error.message,
+                errors: error.errors.map(({type, message}) => ({type, message})),
+                statusCode: 409
+            }, null]
+        } else {
+            return [{
+                message: error.message,
+                statusCode: 500
+            }, null]
         }
     }
-    return result
 }

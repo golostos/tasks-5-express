@@ -11,12 +11,10 @@ tasksRouter.get('/api/tasks', async (req, res) => {
 
 tasksRouter.post('/api/task', async (req: IRequest, res) => {
     const newTask = req.body
-    const newTaskFromDB = await CreateNewTask(newTask)
-    // @ts-ignore
-    if (newTaskFromDB.statusCode) {
-        // @ts-ignore
-        res.status(newTaskFromDB.statusCode).send(newTaskFromDB)
-    } else {
-        res.status(201).send(newTaskFromDB)
-    }
+    const [error, newTaskFromDB] = await CreateNewTask(newTask)
+    if (error) res.status(error.statusCode).send({
+        errors: error.errors, 
+        message: error.message
+    })
+    else res.status(201).send(newTaskFromDB)
 })

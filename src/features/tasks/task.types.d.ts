@@ -12,3 +12,14 @@ export interface IRequest extends Request {
     }
     body: ITask
 }
+
+export type ErrorMessage = {
+    message: string
+    type: string | null
+}
+
+export type DBValidateError = {
+    message: string
+    errors?: ErrorMessage[]
+    statusCode: number
+}
