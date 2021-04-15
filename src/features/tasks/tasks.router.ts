@@ -12,5 +12,11 @@ tasksRouter.get('/api/tasks', async (req, res) => {
 tasksRouter.post('/api/task', async (req: IRequest, res) => {
     const newTask = req.body
     const newTaskFromDB = await CreateNewTask(newTask)
-    res.status(201).send(newTaskFromDB)
+    // @ts-ignore
+    if (newTaskFromDB.statusCode) {
+        // @ts-ignore
+        res.status(newTaskFromDB.statusCode).send(newTaskFromDB)
+    } else {
+        res.status(201).send(newTaskFromDB)
+    }
 })

@@ -6,5 +6,15 @@ export const GetAllTasks = async () => {
 }
 
 export const CreateNewTask = async (newTask: ITask) => {
-    return Task.create(newTask)
+    let result
+    try {
+        result = await Task.create(newTask)
+    } catch (error) {
+        console.error(error);
+        result = {
+            message: 'Dublicate entity',
+            statusCode: 409
+        }
+    }
+    return result
 }
