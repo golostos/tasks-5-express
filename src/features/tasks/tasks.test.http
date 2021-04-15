@@ -1,0 +1,11 @@
+POST http://localhost:4000/api/task
+Content-Type: application/json
+
+{
+    "text": "Task 1",
+    "completed": false
+}
+
+###
+
+GET http://localhost:4000/api/tasks
